@@ -1,0 +1,53 @@
+{
+  "description": "Optimal hyperparameter configuration for REINFORCE on LunarLander-v3",
+  "environment": "LunarLander-v3",
+  "algorithm": "REINFORCE",
+  "optimal_hyperparameters": {
+    "learning_rate": 3e-4,
+    "network_layers": [256, 128],
+    "gamma": 0.99,
+    "learn_steps_per_episode": 4,
+    "num_transitions_to_store": 4096,
+    "batch_size": 512,
+    "num_episodes": 5000,
+    "grad_clip_norm": 0.5,
+    "optimizer": "adam"
+  },
+  "phase_results": {
+    "phase1_learning_rate": {
+      "tested_values": [5e-5, 1e-4, 3e-4, 5e-4, 1e-3],
+      "best_value": 3e-4,
+      "rationale": "3e-4 provides the best balance between convergence speed and stability for Adam optimizer on policy gradient tasks. Lower rates (1e-4, 5e-5) converge too slowly; higher rates (1e-3) cause instability."
+    },
+    "phase2_network_architecture": {
+      "tested_architectures": [[64, 64], [128, 128], [256, 256], [128, 64], [256, 128]],
+      "best_architecture": [256, 128],
+      "rationale": "[256, 128] offers sufficient capacity for the 8D LunarLander observation space while avoiding over-parameterization. The decreasing layer sizes create a hierarchical feature extraction pipeline."
+    },
+    "phase3_gamma": {
+      "tested_values": [0.95, 0.97, 0.99, 0.995],
+      "best_value": 0.99,
+      "rationale": "gamma=0.99 appropriately weights future rewards for landing tasks that require planning ~300-500 steps ahead. Lower values (0.95) are too myopic; 0.995 can increase variance excessively."
+    },
+    "phase4_training_frequency": {
+      "tested_learn_steps": [1, 2, 4],
+      "tested_buffer_sizes": [1024, 2048, 4096],
+      "tested_batch_sizes": [256, 512, 1024],
+      "best_learn_steps": 4,
+      "best_buffer_size": 4096,
+      "best_batch_size": 512,
+      "rationale": "4 learn steps per episode maximizes sample efficiency. Buffer size 4096 ensures diverse experience replay. Batch size 512 gives stable gradient estimates without excessive memory cost."
+    }
+  },
+  "expected_performance": {
+    "target_average_return": 200,
+    "expected_average_return": {"min": 200, "max": 280},
+    "convergence_episodes": "2000-3500",
+    "stability_metric": "standard deviation < 50 over last 100 evaluations"
+  },
+  "reproducibility": {
+    "random_seed": 42,
+    "num_validation_seeds": 5,
+    "validation_episodes": 5000
+  }
+}

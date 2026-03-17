@@ -1,0 +1,7 @@
+__pycache__/
+*.pyc
+video/
+plots/
+tuning_results/
+optimal_training_results.json
+optimal_training_plot.png

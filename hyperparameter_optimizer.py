@@ -239,7 +239,7 @@ def run_training(config: dict, video_subdir: str = "", verbose: bool = True):
     evaluator_returns = []
 
     for episode in range(num_episodes):
-        obs, _ = env.reset(seed=seed)
+        obs, _ = env.reset(seed=seed + episode)  # vary seed so agent sees diverse starts
         episode_return = 0.0
         done = False
 
@@ -260,8 +260,8 @@ def run_training(config: dict, video_subdir: str = "", verbose: bool = True):
 
         if episode % evaluator_period == 0:
             eval_return = 0.0
-            for _ in range(evaluation_episodes):
-                obs_e, _ = eval_env.reset(seed=seed)
+            for eval_ep_idx in range(evaluation_episodes):
+                obs_e, _ = eval_env.reset(seed=seed + eval_ep_idx)  # vary eval seeds
                 done_e = False
                 while not done_e:
                     action_e, _ = choose_action_jit(
